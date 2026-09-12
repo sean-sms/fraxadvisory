@@ -103,7 +103,58 @@
   .btn-line:hover { border-color: var(--brass); }
   .btn-sm { padding: 9px 16px; font-size: 0.9rem; }
 
-  @media (max-width: 860px) { .nav .nav-link { display: none; } }
+  /* ---------- Mobile menu ---------- */
+  .menu-btn {
+    display: none;
+    align-items: center; justify-content: center;
+    width: 44px; height: 44px;
+    padding: 0; margin-left: 4px;
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    color: var(--text);
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+  }
+  .menu-btn:hover { border-color: var(--brass); }
+  .menu-btn svg { display: block; width: 22px; height: 22px; }
+  .menu-btn .ico-close { display: none; }
+  .menu-btn[aria-expanded="true"] .ico-open { display: none; }
+  .menu-btn[aria-expanded="true"] .ico-close { display: block; }
+  .menu-btn[aria-expanded="true"] { border-color: var(--brass); background: var(--brass-wash); }
+
+  .mobile-nav {
+    display: none;
+    border-top: 1px solid var(--rule);
+    background: rgba(13, 26, 42, 0.98);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    max-height: calc(100dvh - 68px);
+    overflow-y: auto;
+  }
+  .mobile-nav[data-open="true"] { display: block; }
+  .mobile-nav .wrap {
+    display: flex; flex-direction: column;
+    align-items: stretch; justify-content: flex-start;
+    gap: 2px; min-height: 0; padding-block: 10px 20px;
+  }
+  .mobile-nav a {
+    text-decoration: none;
+    color: var(--text);
+    font-size: 1.05rem;
+    padding: 14px 2px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .mobile-nav a:last-child { border-bottom: 0; }
+  .mobile-nav .btn { margin-top: 16px; padding: 14px 22px; }
+
+  @media (max-width: 860px) {
+    .nav .nav-link { display: none; }
+    .menu-btn { display: inline-flex; }
+  }
+  @media (min-width: 861px) {
+    .mobile-nav { display: none !important; }
+  }
 
   /* ---------- Hero ---------- */
   .hero { padding-block: clamp(56px, 9vw, 104px) clamp(56px, 8vw, 96px); background: linear-gradient(180deg, #102137 0%, var(--ink) 100%); border-bottom: 1px solid var(--rule); }
@@ -242,8 +293,23 @@
       <a class="nav-link" href="#experience">Experience</a>
       <a class="nav-link" href="#pricing">Pricing</a>
       <a class="btn btn-brass btn-sm" href="#contact">Let&rsquo;s talk</a>
+      <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="mobileNav" aria-label="Open menu">
+        <svg class="ico-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        <svg class="ico-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
     </nav>
   </div>
+  <nav class="mobile-nav" id="mobileNav" data-open="false" aria-label="Mobile">
+    <div class="wrap">
+      <a href="#services">Services</a>
+      <a href="#why">Why fractional</a>
+      <a href="#approach">Approach</a>
+      <a href="#who">Who we help</a>
+      <a href="#experience">Experience</a>
+      <a href="#pricing">Pricing</a>
+      <a class="btn btn-brass" href="#contact">Let&rsquo;s talk</a>
+    </div>
+  </nav>
 </header>
 
 <main id="top">
@@ -540,5 +606,37 @@
     <span>&copy; 2026 FraxAdvisory. Executive leadership, sized to scale.</span>
   </div>
 </footer>
+<script>
+(function () {
+  var btn = document.getElementById('menuBtn');
+  var nav = document.getElementById('mobileNav');
+  if (!btn || !nav) return;
+
+  function setOpen(open) {
+    nav.setAttribute('data-open', open ? 'true' : 'false');
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  }
+
+  btn.addEventListener('click', function () {
+    setOpen(nav.getAttribute('data-open') !== 'true');
+  });
+
+  nav.addEventListener('click', function (e) {
+    if (e.target.closest('a')) setOpen(false);
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && nav.getAttribute('data-open') === 'true') {
+      setOpen(false);
+      btn.focus();
+    }
+  });
+
+  window.addEventListener('resize', function () {
+    if (window.innerWidth > 860) setOpen(false);
+  });
+})();
+</script>
 </body>
 </html>
